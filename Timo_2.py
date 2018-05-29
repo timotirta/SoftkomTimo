@@ -62,9 +62,9 @@ df['stance_A'] = df['stance_A'].replace("orthodox",0)
 df['stance_A'] = df['stance_A'].replace("southpaw",1)
 df['stance_B'] = df['stance_B'].replace("orthodox",0)
 df['stance_B'] = df['stance_B'].replace("southpaw",1)
-df['result'] = df['result'].replace("draw",0)
-df['result'] = df['result'].replace("win_A",1)
-df['result'] = df['result'].replace("win_B",2)
+df['result'] = df['result'].replace("draw",0.0)
+df['result'] = df['result'].replace("win_A",1.0)
+df['result'] = df['result'].replace("win_B",2.0)
 df['decision'] = df['decision'].replace("DQ",0)
 df['decision'] = df['decision'].replace("KO",1)
 df['decision'] = df['decision'].replace("MD",2)
@@ -117,21 +117,23 @@ print(X_train.shape, y_train.shape)
 print(X_test.shape, y_test.shape)
 
 #lm = MLPClassifier(solver='lbfgs', alpha=1e-5, max_iter=1000,hidden_layer_sizes=(15, 5), random_state=1)
-lm = MLPClassifier(hidden_layer_sizes=(5,5,5),activation='identity', max_iter=100000, alpha=0.33,
-					 solver='adam', verbose=True, shuffle=True,tol=0.000000001)
+lm = MLPClassifier(hidden_layer_sizes=(25,20,15,10,5,10,15,20,25),activation='tanh', max_iter=100000, alpha=0.00000003,
+					 solver='lbfgs', verbose=True, shuffle=True,tol=0.000000000001)
 
 model = lm.fit(X_train.values.tolist(), y_train.values.tolist())
-predict = lm.predict(X_test.values.tolist())
-print(accuracy_score(y_test.values.tolist(), predict))
+predict = lm.predict(X_train.values.tolist())
+print(accuracy_score(y_train.values.tolist(), predict))
 print(y_test.values.tolist())
 print(predict)
 
-plt.scatter(X_test['PC-1'],y_test,label='True Values',color='red')
+'''plt.scatter(X_test['PC-1'],y_test,label='True Values',color='red')
 plt.scatter(X_test['PC-1'],predict,label='Predict',color='blue')
 plt.scatter(y_test,predict,label='True Values vs Predicted Values',color='green')
-'''line_up, = plt.plot(y_test, label='True Values')
+line_up, = plt.plot(y_test, label='True Values')
 line_down, = plt.plot(predict, label='Predict')'''
-#plt.scatter(y_test, predict)
+plt.scatter(y_train, predict)
+plt.xlabel('True Values')
+plt.ylabel('Prediction')
 '''xkutrain = [[35,27,179,175,178,179,0,0,160,160,37,49,0,1,0,1,33,34],
 			[25,30,166,170,170,170,1,1,125,125,38,42,2,2,1,0,29,33],
 			[26,31,175,185,179,185,0,0,164,164,48,50,1,2,1,1,34,32],
