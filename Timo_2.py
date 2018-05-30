@@ -18,6 +18,13 @@ import math
 		train.fillna(pd.Series(np.random.choice(train[y], size=len(train.index))))
 		train[y] = train[y].replace(float('nan'),random.uniform(0,1))
 '''
+def dataClean(train):
+	train2 = train.drop('result',1)
+	train2 = train2.drop('decision',1)
+	for x in train2:
+		train = train[~np.isnan(train[x])]
+	return train
+
 def pcaAwal(train):
 	trainComponent = pca.fit_transform(train)
 	print(pca.explained_variance_ratio_) 
@@ -47,7 +54,7 @@ def isiNan(train):
 
 pca = PCA(.9,svd_solver='full')
 
-df = pd.read_csv("C:\\Users\\owner\\Desktop\\Semester 6\\SoftKom\\SoftkomTimo\\bouts_out_new.csv")
+df = pd.read_csv("C:\\Users\\Tm_Tr\\Desktop\\Semester 6\\Softkom\\SoftkomTimo\\bouts_out_new.csv")
 #df.index += 1
 
 values = {"age_A"  ,"age_B"  ,"height_A"  ,"height_B"  ,"reach_A"  ,"reach_B"  ,"stance_A"  ,"stance_B"  ,"weight_A"  ,"weight_B"  ,"won_A"  ,"won_B"  ,"lost_A"  ,"lost_B"  ,"drawn_A"  ,"drawn_B"  ,"kos_A"  ,"kos_B"  ,"result"  ,"decision"  ,"judge1_A"  ,"judge1_B"  ,"judge2_A"  ,"judge2_B"  ,"judge3_A" ,"judge3_B"}
@@ -76,12 +83,6 @@ df['decision'] = df['decision'].replace("TD",7)
 df['decision'] = df['decision'].replace("TKO",8)
 df['decision'] = df['decision'].replace("UD",9)
 
-target1 = df['result']
-target2 = df['decision']
-train = df
-train = train.drop('result',1)
-train = train.drop('decision',1)
-
 '''
 isiNan()
 trainComponent = pca.fit_transform(train)
@@ -107,22 +108,33 @@ ax.grid()
 fig.show()
 plt.show()'''
 
+#isiNan(train)
+#train = train.replace(float('nan'),0)
+#print(train)
+
+maxim=0
+train = df
+#train = dataClean(train)
+target1 = train['result']
+target2 = train['decision']
+train = train.drop('result',1)
+train = train.drop('decision',1)
+
 isiNan(train)
-
 train = pcaAwal(train)
-
+print(train)
 X_train, X_test, y_train, y_test = train_test_split(train,target1,test_size=0.2,random_state=40)
 print(train)
 print(X_train.shape, y_train.shape)
 print(X_test.shape, y_test.shape)
 
 #lm = MLPClassifier(solver='lbfgs', alpha=1e-5, max_iter=1000,hidden_layer_sizes=(15, 5), random_state=1)
-lm = MLPClassifier(hidden_layer_sizes=(5,3,4),activation='logistic', max_iter=1000, alpha=0.0001,
-					 solver='lbfgs', verbose=True, random_state=1,tol=0.000000001)
+lm = MLPClassifier(hidden_layer_sizes=(100,95,90,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10,5,10,15,20,25,30,35,40,45,50,55,60,65,70,76,80,85,90,95,100),activation='relu', max_iter=1000, alpha=0.00001,
+					 solver='adam', verbose=True, random_state=1,tol=0.000000001)
 
 model = lm.fit(X_train.values.tolist(), y_train.values.tolist())
-predict = lm.predict(X_train.values.tolist())
-print(accuracy_score(y_train.values.tolist(), predict))
+predict = lm.predict(X_test.values.tolist())
+print(accuracy_score(y_test.values.tolist(), predict))
 #print(y_test.values.tolist())
 #print(predict)
 
@@ -131,7 +143,7 @@ plt.scatter(X_test['PC-1'],predict,label='Predict',color='blue')
 plt.scatter(y_test,predict,label='True Values vs Predicted Values',color='green')
 line_up, = plt.plot(y_test, label='True Values')
 line_down, = plt.plot(predict, label='Predict')'''
-plt.scatter(y_train, predict)
+plt.scatter(y_test, predict)
 plt.xlabel('True Values')
 plt.ylabel('Prediction')
 '''xkutrain = [[35,27,179,175,178,179,0,0,160,160,37,49,0,1,0,1,33,34],
