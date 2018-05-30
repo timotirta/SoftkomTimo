@@ -117,14 +117,14 @@ print(X_train.shape, y_train.shape)
 print(X_test.shape, y_test.shape)
 
 #lm = MLPClassifier(solver='lbfgs', alpha=1e-5, max_iter=1000,hidden_layer_sizes=(15, 5), random_state=1)
-lm = MLPClassifier(hidden_layer_sizes=(25,20,15,10,5,10,15,20,25),activation='tanh', max_iter=100000, alpha=0.00000003,
-					 solver='lbfgs', verbose=True, shuffle=True,tol=0.000000000001)
+lm = MLPClassifier(hidden_layer_sizes=(5,3,4),activation='logistic', max_iter=1000, alpha=0.0001,
+					 solver='lbfgs', verbose=True, random_state=1,tol=0.000000001)
 
 model = lm.fit(X_train.values.tolist(), y_train.values.tolist())
 predict = lm.predict(X_train.values.tolist())
 print(accuracy_score(y_train.values.tolist(), predict))
-print(y_test.values.tolist())
-print(predict)
+#print(y_test.values.tolist())
+#print(predict)
 
 '''plt.scatter(X_test['PC-1'],y_test,label='True Values',color='red')
 plt.scatter(X_test['PC-1'],predict,label='Predict',color='blue')
