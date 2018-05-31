@@ -35,7 +35,7 @@ def pcaAwal(train):
 		ctr += 1
 
 	train = pd.DataFrame(data = trainComponent,columns = kolom)
-	return train
+	return train,ctr
 
 def isiNan(train):
 	train.apply(lambda x: np.where(x.isnull(), x.dropna().sample(len(x), replace=True), x))
@@ -50,11 +50,11 @@ def isiNan(train):
 		random.shuffle(diisi)
 		#print(train[y].loc[np.isnan(train[y])])
 		train[y].loc[np.isnan(train[y])] = train[y].loc[np.isnan(train[y])] if len(diisi) <= 1 else diisi
-		train.loc[~np.isnan(train[y]), [y]] = scaler.fit_transform(train.loc[~np.isnan(train[y]), [y]])
+		#train.loc[~np.isnan(train[y]), [y]] = scaler.fit_transform(train.loc[~np.isnan(train[y]), [y]])
 
 pca = PCA(.9,svd_solver='full')
 
-df = pd.read_csv("C:\\Users\\Tm_Tr\\Desktop\\Semester 6\\Softkom\\SoftkomTimo\\bouts_out_new.csv")
+df = pd.read_csv("C:\\Users\\owner\\Desktop\\Semester 6\\Softkom\\SoftkomTimo\\bouts_out_new.csv")
 #df.index += 1
 
 values = {"age_A"  ,"age_B"  ,"height_A"  ,"height_B"  ,"reach_A"  ,"reach_B"  ,"stance_A"  ,"stance_B"  ,"weight_A"  ,"weight_B"  ,"won_A"  ,"won_B"  ,"lost_A"  ,"lost_B"  ,"drawn_A"  ,"drawn_B"  ,"kos_A"  ,"kos_B"  ,"result"  ,"decision"  ,"judge1_A"  ,"judge1_B"  ,"judge2_A"  ,"judge2_B"  ,"judge3_A" ,"judge3_B"}
@@ -121,18 +121,26 @@ train = train.drop('result',1)
 train = train.drop('decision',1)
 
 isiNan(train)
-train = pcaAwal(train)
+train,ctr = pcaAwal(train)
 print(train)
 X_train, X_test, y_train, y_test = train_test_split(train,target1,test_size=0.2,random_state=40)
 print(train)
 print(X_train.shape, y_train.shape)
 print(X_test.shape, y_test.shape)
-
+X_train = scaler.fit_transform(X_train)
+arrHidden = []
+for x in range(ctr):
+	arrHidden.append(ctr*2-x*2)
+	if((ctr-x)<3):
+		break
+print(arrHidden)
 #lm = MLPClassifier(solver='lbfgs', alpha=1e-5, max_iter=1000,hidden_layer_sizes=(15, 5), random_state=1)
-lm = MLPClassifier(hidden_layer_sizes=(100,95,90,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10,5,10,15,20,25,30,35,40,45,50,55,60,65,70,76,80,85,90,95,100),activation='relu', max_iter=1000, alpha=0.00001,
-					 solver='adam', verbose=True, random_state=1,tol=0.000000001)
+#lm = MLPClassifier(hidden_layer_sizes=(100,95,90,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10,5,10,15,20,25,30,35,40,45,50,55,60,65,70,76,80,85,90,95,100),activation='relu', max_iter=1000, alpha=0.0001,
+#					 solver='adam', verbose=True, random_state=1,tol=0.000000001)
+lm = MLPClassifier(hidden_layer_sizes=(arrHidden),activation='relu', max_iter=1000, alpha=0.33,
+					 solver='lbfgs', verbose=True, random_state=1,tol=0.000000001)
 
-model = lm.fit(X_train.values.tolist(), y_train.values.tolist())
+model = lm.fit(X_train, y_train.values.tolist())
 predict = lm.predict(X_test.values.tolist())
 print(accuracy_score(y_test.values.tolist(), predict))
 #print(y_test.values.tolist())
