@@ -59,9 +59,16 @@ df = pd.read_csv("C:\\Users\\owner\\Desktop\\Semester 6\\Softkom\\SoftkomTimo\\b
 
 values = {"age_A"  ,"age_B"  ,"height_A"  ,"height_B"  ,"reach_A"  ,"reach_B"  ,"stance_A"  ,"stance_B"  ,"weight_A"  ,"weight_B"  ,"won_A"  ,"won_B"  ,"lost_A"  ,"lost_B"  ,"drawn_A"  ,"drawn_B"  ,"kos_A"  ,"kos_B"  ,"result"  ,"decision"  ,"judge1_A"  ,"judge1_B"  ,"judge2_A"  ,"judge2_B"  ,"judge3_A" ,"judge3_B"}
 values2 = list(values)
+
 values3 = {'PC 1' , 'PC 2'}
 values2.pop(values2.index('result'))
 values2.pop(values2.index('decision'))
+values2.pop(values2.index("judge1_A"))
+values2.pop(values2.index("judge1_B"))
+values2.pop(values2.index("judge2_A"))
+values2.pop(values2.index("judge2_B"))
+values2.pop(values2.index("judge3_A"))
+values2.pop(values2.index("judge3_B"))
 
 scaler = MinMaxScaler()
 
@@ -119,39 +126,67 @@ target1 = train['result']
 target2 = train['decision']
 train = train.drop('result',1)
 train = train.drop('decision',1)
+train = train.drop("judge1_A",1)
+train = train.drop("judge1_B",1)
+train = train.drop("judge2_A",1)
+train = train.drop("judge2_B",1)
+train = train.drop("judge3_A",1)
+train = train.drop("judge3_B",1)
 
 isiNan(train)
 train,ctr = pcaAwal(train)
 print(train)
 X_train, X_test, y_train, y_test = train_test_split(train,target1,test_size=0.2,random_state=40)
 print(train)
-print(X_train.shape, y_train.shape)
-print(X_test.shape, y_test.shape)
+#print(X_train.shape, y_train.shape)
+#print(X_test.shape, y_test.shape)
+cobaY = []
+for x in y_train:
+	if x==0.0:
+		cobaY.append([1,0,0])
+	elif x==1.0:
+		cobaY.append([0,1,0])
+	else:
+		cobaY.append([0,0,1])
 X_train = scaler.fit_transform(X_train)
 arrHidden = []
-for x in range(ctr):
-	arrHidden.append(ctr*2-x*2)
-	if((ctr-x)<3):
+for x in range(1,ctr):
+	arrHidden.append(ctr-x)
+	if((ctr-x)<4):
 		break
+for x in range(4,ctr):
+	arrHidden.append(x)
 print(arrHidden)
 #lm = MLPClassifier(solver='lbfgs', alpha=1e-5, max_iter=1000,hidden_layer_sizes=(15, 5), random_state=1)
 #lm = MLPClassifier(hidden_layer_sizes=(100,95,90,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10,5,10,15,20,25,30,35,40,45,50,55,60,65,70,76,80,85,90,95,100),activation='relu', max_iter=1000, alpha=0.0001,
 #					 solver='adam', verbose=True, random_state=1,tol=0.000000001)
-lm = MLPClassifier(hidden_layer_sizes=(arrHidden),activation='relu', max_iter=1000, alpha=0.33,
-					 solver='lbfgs', verbose=True, random_state=1,tol=0.000000001)
+lm = MLPClassifier(hidden_layer_sizes=(5,4,3,4,5),activation='tanh', max_iter=1000, alpha=1e-5,
+					 solver='adam', verbose=True, random_state=1,tol=0)
 
-model = lm.fit(X_train, y_train.values.tolist())
+model = lm.fit(X_train, cobaY)
 predict = lm.predict(X_test.values.tolist())
-print(accuracy_score(y_test.values.tolist(), predict))
+print(predict)
+#print(accuracy_score(y_test.values.tolist(), predict))
 #print(y_test.values.tolist())
 #print(predict)
-
+predict2 = []
+ctr = 0
+for x in predict:
+	print(x,target1[ctr])
+	ctr+=1
+	if (x == [1,0,0]).all():
+		predict2.append(0.0)
+	elif (x == [0,1,0]).all():
+		predict2.append(1.0)
+	else:
+		predict2.append(2.0)
+print(accuracy_score(y_test.values.tolist(), predict2))
 '''plt.scatter(X_test['PC-1'],y_test,label='True Values',color='red')
 plt.scatter(X_test['PC-1'],predict,label='Predict',color='blue')
 plt.scatter(y_test,predict,label='True Values vs Predicted Values',color='green')
 line_up, = plt.plot(y_test, label='True Values')
 line_down, = plt.plot(predict, label='Predict')'''
-plt.scatter(y_test, predict)
+plt.scatter(y_test, predict2)
 plt.xlabel('True Values')
 plt.ylabel('Prediction')
 '''xkutrain = [[35,27,179,175,178,179,0,0,160,160,37,49,0,1,0,1,33,34],
