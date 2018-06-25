@@ -12,6 +12,8 @@ from matplotlib import pyplot as plt
 import matplotlib as mpl
 import math
 import _pickle as cPickle
+from sklearn.metrics import f1_score
+
 '''def isiNan():
 	for y in values2:
 		null_index = train[y].isnull()
@@ -133,7 +135,8 @@ def arrHiddenPakai():
 		arrHidden.append(x)
 	#print(cobaY)
 	print(arrHidden)
-pca = PCA(.99,svd_solver='full')
+
+pca = PCA(.999,svd_solver='full')
 
 df = pd.read_csv("C:\\Users\\owner\\Desktop\\Semester 6\\Softkom\\SoftkomTimo\\bouts_out_new.csv")
 #df.index += 1
@@ -218,21 +221,20 @@ train = train.drop('decision',1)
 #isiNan(train)
 #train = scaler.fit_transform(train)
 train,ctr = pcaAwal(train)
-print(train)
 X_train, X_test, y_train, y_test = train_test_split(train,target1,test_size=0.2,random_state=40)
 print(train)
 #print(X_train.shape, y_train.shape)
 #print(X_test.shape, y_test.shape)
-cobaY = []
-gantijadibinertarget1()
+#cobaY = []
+#gantijadibinertarget1()
 X_train = scaler.fit_transform(X_train)
-
+print(X_train)
 #lm = MLPClassifier(solver='lbfgs', alpha=1e-5, max_iter=1000,hidden_layer_sizes=(15, 5), random_state=1)
 #lm = MLPClassifier(hidden_layer_sizes=(100,95,90,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10,5,10,15,20,25,30,35,40,45,50,55,60,65,70,76,80,85,90,95,100),activation='relu', max_iter=1000, alpha=0.0001,
 #					 solver='adam', verbose=True, random_state=1,tol=0.000000001)
-lm = MLPClassifier(hidden_layer_sizes=(15,10,5,10,),activation='relu', max_iter=10000, alpha=0.00001,
+lm = MLPClassifier(hidden_layer_sizes=(9,8,7,6,5,4,3),activation='relu', max_iter=10000, alpha=0.00001,
 					 solver='adam', verbose=True, random_state=1,tol=0.000001,warm_start=True)
-#with open('relu_classifier.pkl', 'rb') as fid:
+#with open('relu_classifier_pca099.pkl', 'rb') as fid:
 #    model = cPickle.load(fid)
 model = lm.fit(X_train, y_train)
 for epoch in range(15000):
@@ -240,15 +242,16 @@ for epoch in range(15000):
 	print("--------------")
 	model = model.partial_fit(X_train, y_train)
 predict = model.predict(X_test.values.tolist())
-with open('relu_classifier_pca099.pkl', 'wb') as fid:
+with open('relu_classifier_pca0995.pkl', 'wb') as fid:
     cPickle.dump(model, fid)
 #print(predict)
 #print(accuracy_score(y_test.values.tolist(), predict))
 #print(y_test.values.tolist())
 #print(predict)
-predict2 = []
-baliktarget1()
+#predict2 = []
+#baliktarget1()
 print(accuracy_score(y_test.values.tolist(), predict))
+print("F1 Score : ",f1_score(y_test, predict, average='macro'))
 '''plt.scatter(X_test['PC-1'],y_test,label='True Values',color='red')
 plt.scatter(X_test['PC-1'],predict,label='Predict',color='blue')
 plt.scatter(y_test,predict,label='True Values vs Predicted Values',color='green')
