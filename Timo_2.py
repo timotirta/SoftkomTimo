@@ -1,4 +1,5 @@
 import pandas as pd
+from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 import random
@@ -10,6 +11,7 @@ from sklearn.metrics import confusion_matrix
 from matplotlib import pyplot as plt
 import matplotlib as mpl
 import math
+import _pickle as cPickle
 '''def isiNan():
 	for y in values2:
 		null_index = train[y].isnull()
@@ -36,6 +38,75 @@ def pcaAwal(train):
 
 	train = pd.DataFrame(data = trainComponent,columns = kolom)
 	return train,ctr
+def gantijadibinertarget1():
+	for x in y_train:
+		if x==0.0:
+			cobaY.append([1,0,0])
+		elif x==1.0:
+			cobaY.append([0,1,0])
+		else:
+			cobaY.append([0,0,1])
+
+def gantijadibinertarget2():
+	for x in y_train:
+		if x==0:
+			cobaY.append([1,0,0,0,0,0,0,0,0,0])
+		elif x==1:
+			cobaY.append([0,1,0,0,0,0,0,0,0,0])
+		elif x==2:
+			cobaY.append([0,0,1,0,0,0,0,0,0,0])
+		elif x==3:
+			cobaY.append([0,0,0,1,0,0,0,0,0,0])
+		elif x==4:
+			cobaY.append([0,0,0,0,1,0,0,0,0,0])
+		elif x==5:
+			cobaY.append([0,0,0,0,0,1,0,0,0,0])
+		elif x==6:
+			cobaY.append([0,0,0,0,0,0,1,0,0,0])
+		elif x==7:
+			cobaY.append([0,0,0,0,0,0,0,1,0,0])
+		elif x==8:
+			cobaY.append([0,0,0,0,0,0,0,0,1,0])
+		elif x==9:
+			cobaY.append([0,0,0,0,0,0,0,0,0,1])
+				
+def baliktarget1():
+	ctr = 0
+	for x in predict:
+		#print(x,target1[ctr])
+		ctr+=1
+		if (x == [1,0,0]).all():
+			predict2.append(0.0)
+		elif (x == [0,1,0]).all():
+			predict2.append(1.0)
+		else:
+			predict2.append(2.0)
+
+def baliktarget2():
+	ctr = 0
+	for x in predict:
+		#print(x,target1[ctr])
+		ctr+=1
+		if (x == [1,0,0,0,0,0,0,0,0,0]).all():
+			predict2.append(0)
+		elif (x == [0,1,0,0,0,0,0,0,0,0]).all():
+			predict2.append(1)
+		elif (x == [0,0,1,0,0,0,0,0,0,0]).all():
+			predict2.append(2)
+		elif (x == [0,0,0,1,0,0,0,0,0,0]).all():
+			predict2.append(3)
+		elif (x == [0,0,0,0,1,0,0,0,0,0]).all():
+			predict2.append(4)
+		elif (x == [0,0,0,0,0,1,0,0,0,0]).all():
+			predict2.append(5)
+		elif (x == [0,0,0,0,0,0,1,0,0,0]).all():
+			predict2.append(6)
+		elif (x == [0,0,0,0,0,0,0,1,0,0]).all():
+			predict2.append(7)
+		elif (x == [0,0,0,0,0,0,0,0,1,0]).all():
+			predict2.append(8)
+		else:
+			predict2.append(9)
 
 def isiNan(train):
 	train.apply(lambda x: np.where(x.isnull(), x.dropna().sample(len(x), replace=True), x))
@@ -52,7 +123,17 @@ def isiNan(train):
 		train[y].loc[np.isnan(train[y])] = train[y].loc[np.isnan(train[y])] if len(diisi) <= 1 else diisi
 		#train.loc[~np.isnan(train[y]), [y]] = scaler.fit_transform(train.loc[~np.isnan(train[y]), [y]])
 
-pca = PCA(.9,svd_solver='full')
+def arrHiddenPakai():
+	arrHidden = []
+	for x in range(1,ctr):
+		arrHidden.append(ctr-x)
+		if((ctr-x)<4):
+			break
+	for x in range(4,ctr):
+		arrHidden.append(x)
+	#print(cobaY)
+	print(arrHidden)
+pca = PCA(.99,svd_solver='full')
 
 df = pd.read_csv("C:\\Users\\owner\\Desktop\\Semester 6\\Softkom\\SoftkomTimo\\bouts_out_new.csv")
 #df.index += 1
@@ -70,7 +151,8 @@ values2.pop(values2.index("judge2_B"))
 values2.pop(values2.index("judge3_A"))
 values2.pop(values2.index("judge3_B"))
 
-scaler = MinMaxScaler()
+#scaler = MinMaxScaler()
+scaler = StandardScaler()
 
 df['stance_A'] = df['stance_A'].replace("orthodox",0)
 df['stance_A'] = df['stance_A'].replace("southpaw",1)
@@ -121,19 +203,20 @@ plt.show()'''
 
 maxim=0
 train = df
-#train = dataClean(train)
+train = dataClean(train)
 target1 = train['result']
 target2 = train['decision']
 train = train.drop('result',1)
 train = train.drop('decision',1)
-train = train.drop("judge1_A",1)
-train = train.drop("judge1_B",1)
-train = train.drop("judge2_A",1)
-train = train.drop("judge2_B",1)
-train = train.drop("judge3_A",1)
-train = train.drop("judge3_B",1)
+#train = train.drop("judge1_A",1)
+#train = train.drop("judge1_B",1)
+#train = train.drop("judge2_A",1)
+#train = train.drop("judge2_B",1)
+#train = train.drop("judge3_A",1)
+#train = train.drop("judge3_B",1)
 
-isiNan(train)
+#isiNan(train)
+#train = scaler.fit_transform(train)
 train,ctr = pcaAwal(train)
 print(train)
 X_train, X_test, y_train, y_test = train_test_split(train,target1,test_size=0.2,random_state=40)
@@ -141,52 +224,37 @@ print(train)
 #print(X_train.shape, y_train.shape)
 #print(X_test.shape, y_test.shape)
 cobaY = []
-for x in y_train:
-	if x==0.0:
-		cobaY.append([1,0,0])
-	elif x==1.0:
-		cobaY.append([0,1,0])
-	else:
-		cobaY.append([0,0,1])
+gantijadibinertarget1()
 X_train = scaler.fit_transform(X_train)
-arrHidden = []
-for x in range(1,ctr):
-	arrHidden.append(ctr-x)
-	if((ctr-x)<4):
-		break
-for x in range(4,ctr):
-	arrHidden.append(x)
-print(arrHidden)
+
 #lm = MLPClassifier(solver='lbfgs', alpha=1e-5, max_iter=1000,hidden_layer_sizes=(15, 5), random_state=1)
 #lm = MLPClassifier(hidden_layer_sizes=(100,95,90,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10,5,10,15,20,25,30,35,40,45,50,55,60,65,70,76,80,85,90,95,100),activation='relu', max_iter=1000, alpha=0.0001,
 #					 solver='adam', verbose=True, random_state=1,tol=0.000000001)
-lm = MLPClassifier(hidden_layer_sizes=(5,4,3,4,5),activation='tanh', max_iter=1000, alpha=1e-5,
-					 solver='adam', verbose=True, random_state=1,tol=0)
-
-model = lm.fit(X_train, cobaY)
-predict = lm.predict(X_test.values.tolist())
-print(predict)
+lm = MLPClassifier(hidden_layer_sizes=(15,10,5,10,),activation='relu', max_iter=10000, alpha=0.00001,
+					 solver='adam', verbose=True, random_state=1,tol=0.000001,warm_start=True)
+#with open('relu_classifier.pkl', 'rb') as fid:
+#    model = cPickle.load(fid)
+model = lm.fit(X_train, y_train)
+for epoch in range(15000):
+	print("Iter - ",epoch)
+	print("--------------")
+	model = model.partial_fit(X_train, y_train)
+predict = model.predict(X_test.values.tolist())
+with open('relu_classifier_pca099.pkl', 'wb') as fid:
+    cPickle.dump(model, fid)
+#print(predict)
 #print(accuracy_score(y_test.values.tolist(), predict))
 #print(y_test.values.tolist())
 #print(predict)
 predict2 = []
-ctr = 0
-for x in predict:
-	print(x,target1[ctr])
-	ctr+=1
-	if (x == [1,0,0]).all():
-		predict2.append(0.0)
-	elif (x == [0,1,0]).all():
-		predict2.append(1.0)
-	else:
-		predict2.append(2.0)
-print(accuracy_score(y_test.values.tolist(), predict2))
+baliktarget1()
+print(accuracy_score(y_test.values.tolist(), predict))
 '''plt.scatter(X_test['PC-1'],y_test,label='True Values',color='red')
 plt.scatter(X_test['PC-1'],predict,label='Predict',color='blue')
 plt.scatter(y_test,predict,label='True Values vs Predicted Values',color='green')
 line_up, = plt.plot(y_test, label='True Values')
 line_down, = plt.plot(predict, label='Predict')'''
-plt.scatter(y_test, predict2)
+plt.scatter(y_test, predict)
 plt.xlabel('True Values')
 plt.ylabel('Prediction')
 '''xkutrain = [[35,27,179,175,178,179,0,0,160,160,37,49,0,1,0,1,33,34],
